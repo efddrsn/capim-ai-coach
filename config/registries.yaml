@@ -1,0 +1,60 @@
+# Sync sources for the AI Tools Catalog.
+# Each entry maps to a fetcher in src/sync/fetchers/<id>.ts that exports
+# `fetch(): Promise<CandidateTool[]>`.
+# Adding a new source = create the fetcher file + add an entry below.
+# Items returned are upserted into Notion with Status=pending-review for human curation.
+
+sources:
+  - id: anthropic-docs
+    name: Anthropic Docs
+    url: https://docs.claude.com
+    cadence: daily
+    enabled: true
+
+  - id: claude-code-changelog
+    name: Claude Code Changelog
+    url: https://docs.claude.com/en/release-notes/claude-code
+    cadence: daily
+    enabled: true
+
+  - id: mcp-registry
+    name: MCP Registry (official)
+    url: https://modelcontextprotocol.io/servers
+    cadence: daily
+    enabled: true
+
+  - id: awesome-mcp
+    name: Awesome MCP Servers (community)
+    url: https://github.com/punkpeye/awesome-mcp-servers
+    cadence: weekly
+    enabled: true
+
+  - id: anthropic-cookbook
+    name: Anthropic Cookbook
+    url: https://github.com/anthropics/anthropic-cookbook
+    cadence: weekly
+    enabled: true
+
+  - id: cowork-changelog
+    name: Cowork Changelog
+    url: TODO_FILL_IN
+    cadence: weekly
+    enabled: false
+
+  - id: taaft
+    name: There's An AI For That
+    url: https://theresanaiforthat.com
+    cadence: weekly
+    enabled: false  # turn on after writing the fetcher
+
+  - id: futurepedia
+    name: Futurepedia
+    url: https://www.futurepedia.io
+    cadence: weekly
+    enabled: false
+
+  - id: product-hunt-ai
+    name: Product Hunt AI
+    url: https://www.producthunt.com/categories/artificial-intelligence
+    cadence: daily
+    enabled: false

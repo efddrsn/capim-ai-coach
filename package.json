@@ -1,0 +1,20 @@
+{
+  "name": "capim-ai-coach",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Skill + sync pipeline for the Capim AI Coach.",
+  "type": "module",
+  "scripts": {
+    "sync": "tsx src/sync/index.ts",
+    "sync:dry-run": "tsx src/sync/index.ts --dry-run"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "yaml": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

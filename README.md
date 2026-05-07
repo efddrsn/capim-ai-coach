@@ -13,12 +13,11 @@ Sugestões são pro próprio usuário da sessão (não pra terceiros).
 
 ## Setup
 
-### 1. Configurar o Notion
+### 1. Notion já configurado
 
-- Crie um database chamado **AI Tools Catalog** com o schema descrito em `.claude/skills/capim-ai-coach/catalog-schema.md`.
-- Popule com 8–10 tools iniciais (mistura de skills do Claude Code, MCPs, recursos do Cowork, e 2–3 third-party de registries como TAAFT/Futurepedia).
-- Cole o database ID em `catalog-schema.md` (substituindo `TODO_PASTE_NOTION_DATABASE_ID_HERE`).
-- Garanta que a integração Notion da Capim (usada pelo Notion MCP) tem acesso ao database.
+- Database **AI Tools Catalog** já criado (id `a51ef42eec804de9ba870eff9fe8587d`, data source `2cd369c1-d5f3-4b8b-adfa-847676702da5`), populado com 100+ entradas cobrindo Claude Code, Anthropic API, Claude Apps, Cowork e third-party.
+- Página separada **AI Tools — Sync Sources (Registries)** lista as fontes que o sync automático consome.
+- Garanta que a integração Notion da Capim (usada pelo Notion MCP da skill e pelo workflow de sync) tem acesso ao database.
 
 ### 2. Instalar como org skill
 
@@ -42,6 +41,31 @@ Numa sessão Claude Code, valide:
 - **Deprecar**: mude `Status=deprecated`. A skill nunca recomenda deprecated.
 - **Refresh periódico**: revise `Last verified` mensalmente. Entradas >90 dias sem verificação têm peso menor.
 - **Iterar a skill**: ajuste `SKILL.md`/`examples.md` se notar falsos positivos (sugestões inoportunas) ou falsos negativos (oportunidades perdidas).
+
+## Sync automático
+
+GitHub Actions roda diariamente (6 UTC) e semanalmente (segunda 7 UTC) em `.github/workflows/catalog-sync.yml`. Para cada fonte habilitada em `config/registries.yaml`, um fetcher em `src/sync/fetchers/<id>.ts` extrai candidatos e o script faz upsert no Notion com `Status=pending-review` e `Auto-synced=true`. Curador humano revisa e promove pra `active`.
+
+### Setup
+
+1. Criar uma Notion integration com acesso ao database **AI Tools Catalog**.
+2. Adicionar o token como secret `NOTION_TOKEN` no GitHub (Settings → Secrets → Actions).
+3. Habilitar fontes em `config/registries.yaml` (mude `enabled: true`).
+4. Local dry-run: `npm install && npm run sync:dry-run`.
+5. Trigger manual no GitHub: Actions → Catalog sync → Run workflow.
+
+### Adicionar nova fonte
+
+1. Criar `src/sync/fetchers/<id>.ts` exportando `fetcher: Fetcher` (veja types em `src/sync/types.ts`).
+2. Registrar em `ALL_FETCHERS` no `src/sync/index.ts`.
+3. Adicionar entrada em `config/registries.yaml` com `enabled: true`.
+4. Atualizar a tabela na página Notion **AI Tools — Sync Sources (Registries)**.
+
+### Limitações
+
+- Fetchers HTML (changelog, MCP registry, TAAFT, Futurepedia) são scrapers heurísticos — vão quebrar quando o site mudar layout. Tratam como best-effort.
+- Itens descobertos sempre entram como `pending-review`. Nunca pulam direto pra `active`.
+- Dedupe é por `Link` ou `Name` normalizado. Se uma fonte muda a URL canônica de um item, vai criar duplicata — humano filtra.
 
 ## Estrutura
 
